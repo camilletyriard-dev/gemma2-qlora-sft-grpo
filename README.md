@@ -110,6 +110,8 @@ stability due to the SFT warm start. Full per-example analysis is in
 
 ## Repository Structure
 
+```text
+
 ├── notebooks/
 │   └── experiments.ipynb          # Complete experiment notebook (A + B)
 │
@@ -143,6 +145,9 @@ stability due to the SFT warm start. Full per-example analysis is in
 │   └── grpo/metrics.json
 │
 └── checkpoints/                   # Empty — adapters hosted on Hugging Face
+
+```
+
 
 ---
 
