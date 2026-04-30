@@ -17,17 +17,17 @@ This project investigates two complementary approaches to steering the behaviour
 of a 2B-parameter instruction-tuned language model through parameter-efficient
 fine-tuning and reinforcement learning from verifiable rewards (RLVR).
 
-**Part A — Style transfer via SFT:**
+**Part A - Style transfer via SFT:**
 `gemma-2-2b-it` is fine-tuned with LoRA adapters to translate standard English
 into Yoda-style syntax using the `dvgodoy/yoda_sentences` dataset. A synthetic
 Yoda-style QA dataset is then generated from `MuskumPillerum/General-Knowledge`
 using the trained translator, and a second SFT stage trains the model to answer
 any question in Yoda style.
 
-**Part B — Reasoning and style via GRPO:**
+**Part B - Reasoning and style via GRPO:**
 GRPO is applied to improve mathematical reasoning on `openai/gsm8k` using a
-composite reward signal. A DistilBERT binary classifier — trained to distinguish
-Yoda-style from standard English text — provides a differentiable style reward.
+composite reward signal. A DistilBERT binary classifier, trained to distinguish
+Yoda-style from standard English text, provides a differentiable style reward.
 Two training strategies are compared: GRPO from the SFT checkpoint (warm start,
 correctness + format rewards) and GRPO from the base model (cold start, full
 three-component reward).
@@ -37,7 +37,7 @@ three-component reward).
 ## Methods
 
 ### Base Model
-- `google/gemma-2-2b-it` — 2.01B parameters, instruction-tuned
+- `google/gemma-2-2b-it`, 2.01B parameters, instruction-tuned
 - 4-bit NF4 QLoRA quantization (BitsAndBytes) during training
 - 8-bit quantization for inference
 - Hardware: NVIDIA A100-SXM4-40GB, Google Colab
@@ -46,7 +46,7 @@ three-component reward).
 
 | Stage | Task | Dataset | Examples |
 |---|---|---|---|
-| A-1 | Baseline inference | — | Zero-shot Yoda translation |
+| A-1 | Baseline inference | - | Zero-shot Yoda translation |
 | A-2 | SFT: English → Yoda | `dvgodoy/yoda_sentences` | 648 train / 72 val |
 | A-3 | Synthetic dataset generation | `MuskumPillerum/General-Knowledge` | 500 / 200 / 500 |
 | A-4 | SFT: Yoda-style QA | Synthetic (A-3) | 500 train / 200 val |
@@ -70,17 +70,17 @@ Training is tracked with Weights & Biases.
 |---|---|---|
 | Correctness | Graduated exact-match: 1.0 for `#### n`, 0.5 for "answer is n" | [0, 1] |
 | Format | Rule-based: presence of `#### <number>` marker | {0, 1} |
-| Style | DistilBERT P(Yoda) — trained on GSM8K English/Yoda pairs | [0, 1] |
+| Style | DistilBERT P(Yoda), trained on GSM8K English/Yoda pairs | [0, 1] |
 | **Total** | Linear sum | [0, 3] |
 
 ### Dataset Quality Filtering (A-3)
 
 A three-tier filter ensures Yoda-translatability of QA pairs:
 
-1. **Tier 1 — Regex**: word count bounds (4–15 per sentence), character
+1. **Tier 1: Regex**: word count bounds (4–15 per sentence), character
    whitelist, no questions in answers, no translation tasks, number density
-2. **Tier 2 — Structural**: no duplicate sentences, no list/enumeration patterns  
-3. **Tier 3 — NLP**: passive voice rate < 50% per sentence (spaCy)
+2. **Tier 2: Structural**: no duplicate sentences, no list/enumeration patterns  
+3. **Tier 3: NLP**: passive voice rate < 50% per sentence (spaCy)
 
 ---
 
@@ -273,15 +273,3 @@ Developed at University College London (2025–2026):
 Camille Tyriard, Ana Quintero, Dunia Tornila, Daniel Huencho,
 Jonathan Bell, Nicolas Tobo.
 
----
-
-## Citation
-```bibtex
-@misc{tyriard2026gemma2grpo,
-  author = {Tyriard, Camille and Quintero, Ana and Tornila, Dunia and
-            Huencho, Daniel and Bell, Jonathan and Tobo, Nicolas},
-  title  = {QLoRA Fine-Tuning of Gemma-2 with SFT and GRPO},
-  year   = {2026},
-  url    = {https://github.com/camilletyriard-dev/gemma2-qlora-sft-grpo}
-}
-```
